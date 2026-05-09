@@ -1,7 +1,7 @@
 /// Copyright 2026 maxim (necromax) alekseenko
 
-#ifndef NECROUTILS_INCLUDE_NECROUTILS_LOGGER_LOGGER_H_
-#define NECROUTILS_INCLUDE_NECROUTILS_LOGGER_LOGGER_H_
+#ifndef INCLUDE_NECROUTILS_LOGGER_LOGGER_H_
+#define INCLUDE_NECROUTILS_LOGGER_LOGGER_H_
 
 #include <memory>
 #include <string>
@@ -48,4 +48,4 @@ class DLL_PUBLIC Logger {
   std::vector<SinkPtr> sinks_;
 };
 
-#endif  // NECROUTILS_INCLUDE_NECROUTILS_LOGGER_LOGGER_H_
+#endif  // INCLUDE_NECROUTILS_LOGGER_LOGGER_H_

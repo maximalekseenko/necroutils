@@ -8,8 +8,10 @@ project(necroutils
 )
 
 # -------------------- OPTIONS --------------------
-option(OUT_NAME "Name of the library file" "necroutils")
-option(RUN_CPPLINT "Run cpplint (Google style) when building" ON)
+if(NOT OUT_NAME)
+    set(OUT_NAME "necroutils")
+endif()
+option(RUN_CPPLINT "Run cpplint (Google style tests) when building" ON)
 
 # -------------------- LIBRARY TARGET --------------------
 add_library(necroutils SHARED)
@@ -53,8 +55,28 @@ target_sources(necroutils
 )
 
 # -------------------- OPTIONAL CPPLINT --------------------
-if(RUN_CPPLINT AND COMMAND run_cpp_lint_checks)
-    run_cpp_lint_checks(necroutils)
+if(RUN_CPPLINT)
+    include(FetchContent)
+    FetchContent_Declare(
+        cpplint
+        GIT_REPOSITORY https://github.com/cpplint/cpplint/
+        GIT_TAG        2.0.2)
+    FetchContent_MakeAvailable(cpplint)
+
+    message(!!! ${cpplint_SOURCE_DIR})
+    find_package(Python3 COMPONENTS Interpreter REQUIRED)
+
+    add_custom_command(
+        TARGET necroutils POST_BUILD
+        COMMAND ${Python3_EXECUTABLE}
+        ${cpplint_SOURCE_DIR}/cpplint.py
+        "--recursive"
+        "--quiet"
+        "${CMAKE_CURRENT_SOURCE_DIR}/include"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src"
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        COMMENT "Running cpplint (Google styles tests)"
+    )
 endif()
 
 # -------------------- INSTALLATION --------------------

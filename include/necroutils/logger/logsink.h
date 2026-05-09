@@ -1,7 +1,7 @@
 /// Copyright 2026 maxim (necromax) alekseenko
 
-#ifndef NECROUTILS_INCLUDE_NECROUTILS_LOGGER_LOGSINK_H_
-#define NECROUTILS_INCLUDE_NECROUTILS_LOGGER_LOGSINK_H_
+#ifndef INCLUDE_NECROUTILS_LOGGER_LOGSINK_H_
+#define INCLUDE_NECROUTILS_LOGGER_LOGSINK_H_
 
 #include <cstdint>
 #include <fstream>
@@ -14,6 +14,9 @@
 
 /// @brief Interface type for LogSinks.
 class DLL_PUBLIC ILogSink {
+ public:
+  virtual ~ILogSink() = default;
+
  public:  // -------------------- TYPE DEFINITIONS --------------------
   /// @brief Type for a function for creating messages.
   using MakeMessageFn = std::function<std::string(
@@ -53,7 +56,7 @@ class DLL_PUBLIC ILogSink {
   virtual void OnLog(const std::string& message);
 
  private:  // -------------------- FRIEND FUNCTIONS --------------------
-  friend struct Logger;
+  friend class Logger;
 
   /// @brief Log
   /// @param message
@@ -73,20 +76,24 @@ class DLL_PUBLIC ILogSink {
   std::unordered_set<LogLevel> blacklist_log_levels_;
 };
 
+// +------------------- -------- -------------------+
+// -------------------- DERIVEDS --------------------
+// +------------------- -------- -------------------+
+
 class DLL_PUBLIC FileLogSink : public ILogSink {
- public:  // -------------------- CONSTRUCTORS --------------------
+ public:
   explicit FileLogSink(const std::string& filename);
 
- protected:  // -------------------- OVERRIDES --------------------
+ protected:
   void OnLog(const std::string& message) override;
 
- private:  // -------------------- PRIVATE MEMBERS --------------------
+ private:
   std::ofstream output_file_;
 };
 
 class DLL_PUBLIC ConsoleLogSink : public ILogSink {
- protected:  // -------------------- OVERRIDES --------------------
+ protected:
   void OnLog(const std::string& message) override;
 };
 
-#endif  // NECROUTILS_INCLUDE_NECROUTILS_LOGGER_LOGSINK_H_
+#endif  // INCLUDE_NECROUTILS_LOGGER_LOGSINK_H_

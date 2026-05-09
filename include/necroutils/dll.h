@@ -1,7 +1,7 @@
 /// Copyright 2026 maxim (necromax) alekseenko
 
-#ifndef NECROUTILS_INCLUDE_NECROUTILS_DLL_H_
-#define NECROUTILS_INCLUDE_NECROUTILS_DLL_H_
+#ifndef INCLUDE_NECROUTILS_DLL_H_
+#define INCLUDE_NECROUTILS_DLL_H_
 
 #if defined(_WIN32) || defined(__CYGWIN__)
   #if defined(NECROUTILS_LOCAL)
@@ -28,4 +28,4 @@
   #endif
 #endif
 
-#endif  // NECROUTILS_INCLUDE_NECROUTILS_DLL_H_
+#endif  // INCLUDE_NECROUTILS_DLL_H_
