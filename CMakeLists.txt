@@ -43,7 +43,7 @@ target_include_directories(necroutils
 
 # -------------------- COMPILE DEFINITIONS --------------------
 target_compile_definitions(necroutils
-    PRIVATE nECROuTILS_LOCAL
+    PRIVATE NECROUTILS_LOCAL
 )
 
 # -------------------- SOURCES --------------------
