@@ -1,6 +1,6 @@
 // Copyright 2026 maxim (necromax) alekseenko
 
-#include "necroutils/collective_exception/collective_exception.h"
+#include "necroutils/colexc/collective_exception.h"
 
 #include <sstream>
 #include <string>
