@@ -11,7 +11,7 @@
 
 /// @brief An exception for handling
 /// cases of multiple exceptions.
-class DLL_PUBLIC CollectiveException : public std::exception {
+class NECROUTILS_API CollectiveException : public std::exception {
  public:  // -------------------- CONSTRUCTORS --------------------
   CollectiveException() = default;
 

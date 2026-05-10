@@ -6,25 +6,25 @@
 #if defined(_WIN32) || defined(__CYGWIN__)
   #if defined(NECROUTILS_LOCAL)
     #if defined(__GNUC__)
-      #define DLL_PUBLIC __attribute__((dllexport))
+      #define NECROUTILS_API __attribute__((dllexport))
     #else
-      #define DLL_PUBLIC __declspec(dllexport)
+      #define NECROUTILS_API __declspec(dllexport)
     #endif
       #else
     #if defined(__GNUC__)
-      #define DLL_PUBLIC __attribute__((dllimport))
+      #define NECROUTILS_API __attribute__((dllimport))
     #else
-      #define DLL_PUBLIC __declspec(dllimport)
+      #define NECROUTILS_API __declspec(dllimport)
     #endif
   #endif
-  #define DLL_LOCAL
+  #define NECROUTILS_INTERNAL
 #else
   #if __GNUC__ >= 4
-    #define DLL_PUBLIC __attribute__((visibility("default")))
-    #define DLL_LOCAL __attribute__((visibility("hidden")))
+    #define NECROUTILS_API __attribute__((visibility("default")))
+    #define NECROUTILS_INTERNAL __attribute__((visibility("hidden")))
   #else
-    #define DLL_PUBLIC
-    #define DLL_LOCAL
+    #define NECROUTILS_API
+    #define NECROUTILS_INTERNAL
   #endif
 #endif
 

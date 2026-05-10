@@ -21,7 +21,7 @@
 ///
 /// When `Log` function is called,
 /// it passes log information to logger's sinks.
-class DLL_PUBLIC Logger {
+class NECROUTILS_API Logger {
  public:  // -------------------- TYPE DEFINITIONS --------------------
   /// @brief Type for Sink that is being passed around.
   using SinkPtr = std::shared_ptr<ILogSink>;

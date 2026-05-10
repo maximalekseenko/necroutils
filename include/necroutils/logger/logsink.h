@@ -13,7 +13,7 @@
 #include "necroutils/logger/loglevel.h"
 
 /// @brief Interface type for LogSinks.
-class DLL_PUBLIC ILogSink {
+class NECROUTILS_API ILogSink {
  public:
   virtual ~ILogSink() = default;
 
@@ -80,7 +80,7 @@ class DLL_PUBLIC ILogSink {
 // -------------------- DERIVEDS --------------------
 // +------------------- -------- -------------------+
 
-class DLL_PUBLIC FileLogSink : public ILogSink {
+class NECROUTILS_API FileLogSink : public ILogSink {
  public:
   explicit FileLogSink(const std::string& filename);
 
@@ -91,7 +91,7 @@ class DLL_PUBLIC FileLogSink : public ILogSink {
   std::ofstream output_file_;
 };
 
-class DLL_PUBLIC ConsoleLogSink : public ILogSink {
+class NECROUTILS_API ConsoleLogSink : public ILogSink {
  protected:
   void OnLog(const std::string& message) override;
 };
