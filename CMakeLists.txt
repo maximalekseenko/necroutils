@@ -49,7 +49,7 @@ target_compile_definitions(necroutils
 # -------------------- SOURCES --------------------
 target_sources(necroutils
     PRIVATE
-        src/necroutils/collective_exception/collective_exception.cpp
+        src/necroutils/colexc/collective_exception.cpp
         src/necroutils/logger/logger.cpp
         src/necroutils/logger/logsink.cpp
 )
