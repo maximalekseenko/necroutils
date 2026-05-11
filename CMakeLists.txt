@@ -29,7 +29,7 @@ target_compile_features(necroutils PUBLIC cxx_std_20)
 if(MSVC)
     target_compile_options(necroutils PRIVATE /W4 /permissive-)
 else()
-    target_compile_options(necroutils PRIVATE -Wall -Wextra -Wpedantic -Wshadow -Wnon-virtual-dtor)
+    target_compile_options(necroutils PRIVATE -Wall -Wpedantic -Wshadow -Wnon-virtual-dtor)
 endif()
 
 # -------------------- INCLUDE DIRECTORIES --------------------
