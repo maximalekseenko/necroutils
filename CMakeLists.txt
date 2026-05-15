@@ -63,7 +63,6 @@ if(RUN_CPPLINT)
         GIT_TAG        2.0.2)
     FetchContent_MakeAvailable(cpplint)
 
-    message(!!! ${cpplint_SOURCE_DIR})
     find_package(Python3 COMPONENTS Interpreter REQUIRED)
 
     add_custom_command(
