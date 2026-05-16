@@ -11,7 +11,7 @@ project(necroutils
 if(NOT OUT_NAME)
     set(OUT_NAME "necroutils")
 endif()
-option(RUN_CPPLINT "Run cpplint (Google style tests) when building" ON)
+option(NECROUTILS_RUN_CPPLINT "Run cpplint (Google style tests) when building" ON)
 
 # -------------------- LIBRARY TARGET --------------------
 add_library(necroutils SHARED)
@@ -55,7 +55,7 @@ target_sources(necroutils
 )
 
 # -------------------- OPTIONAL CPPLINT --------------------
-if(RUN_CPPLINT)
+if(NECROUTILS_RUN_CPPLINT)
     include(FetchContent)
     FetchContent_Declare(
         cpplint
