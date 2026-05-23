@@ -32,6 +32,10 @@ else()
     target_compile_options(necroutils PRIVATE -Wall -Wpedantic -Wshadow -Wnon-virtual-dtor)
 endif()
 
+if(MINGW)
+    target_link_options(necroutils PRIVATE -static -static-libgcc -static-libstdc++)
+endif()
+
 # -------------------- INCLUDE DIRECTORIES --------------------
 target_include_directories(necroutils
     PUBLIC
