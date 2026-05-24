@@ -37,11 +37,9 @@ void ILogSink::Log(const std::string& message, const LogLevel& log_level,
   OnLog(make_message_(message, log_level, source_name));
 }
 
-void ILogSink::OnLog(const std::string& message) {}
-
 std::string ILogSink::MakeMessageDefault(const std::string& message,
                                          const LogLevel& log_level,
-                                         const std::string& source_name) {
+                                         const std::string&) {
   std::string final_message;
 
   final_message += "[";

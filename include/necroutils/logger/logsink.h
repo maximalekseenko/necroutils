@@ -53,7 +53,7 @@ class NECROUTILS_API ILogSink {
   /// Passed message is already parsed and filtered.
   /// It already ends with a new line.
   /// @param message
-  virtual void OnLog(const std::string& message);
+  virtual void OnLog(const std::string& message) = 0;
 
  private:  // -------------------- FRIEND FUNCTIONS --------------------
   friend class Logger;
