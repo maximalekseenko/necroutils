@@ -8,17 +8,15 @@ project(necroutils
 )
 
 # -------------------- OPTIONS --------------------
-if(NOT OUT_NAME)
-    set(OUT_NAME "necroutils")
-endif()
-option(NECROUTILS_RUN_CPPLINT "Run cpplint (Google style tests) when building" ON)
+option(NECROUTILS_INSTALL "Install necroutils and it's dependencies" ${PROJECT_IS_TOP_LEVEL})
+option(NECROUTILS_RUN_CPPLINT "Run cpplint (Google style tests) when building" OFF)
 
 # -------------------- LIBRARY TARGET --------------------
 add_library(necroutils SHARED)
 add_library(necroutils::necroutils ALIAS necroutils)
 
 set_target_properties(necroutils PROPERTIES
-    OUTPUT_NAME ${OUT_NAME}
+    OUTPUT_NAME "necroutils"
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}
 )
@@ -77,47 +75,49 @@ if(NECROUTILS_RUN_CPPLINT)
         "--quiet"
         "${CMAKE_CURRENT_SOURCE_DIR}/include"
         "${CMAKE_CURRENT_SOURCE_DIR}/src"
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        COMMENT "Running cpplint (Google styles tests)"
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Running cpplint (Google styles tests) for necroutils."
     )
 endif()
 
 # -------------------- INSTALLATION --------------------
-# Install library
-install(TARGETS necroutils
-    EXPORT necroutilsTargets
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-    RUNTIME DESTINATION bin
-    INCLUDES DESTINATION include
-)
+if (NECROUTILS_INSTALL)
+    include(GNUInstallDirs)
+    include(CMakePackageConfigHelpers)
+    
+    install(TARGETS necroutils
+        EXPORT necroutilsTargets
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    )
 
-# Install headers
-install(DIRECTORY include/ DESTINATION include)
+    install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-# Export for use with find_package
-install(EXPORT necroutilsTargets
-    FILE necroutilsTargets.cmake
-    NAMESPACE necroutils::
-    DESTINATION lib/cmake/necroutils
-)
+    install(EXPORT necroutilsTargets
+        FILE necroutilsTargets.cmake
+        NAMESPACE necroutils::
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/necroutils
+    )
 
-# -------------------- CONFIG PACKAGE --------------------
-include(CMakePackageConfigHelpers)
-write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/necroutilsConfigVersion.cmake"
-    VERSION ${PROJECT_VERSION}
-    COMPATIBILITY AnyNewerVersion
-)
+    set(targets_export_name necroutilsTargets)
 
-configure_package_config_file(
-    "${CMAKE_CURRENT_LIST_DIR}/cmake/necroutils-config.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/necroutilsConfig.cmake"
-    INSTALL_DESTINATION lib/cmake/necroutils
-)
+    configure_package_config_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/necroutils-config.cmake.in
+        ${CMAKE_CURRENT_BINARY_DIR}/necroutilsConfig.cmake
+        INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/necroutils
+    )
 
-install(FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/necroutilsConfig.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/necroutilsConfigVersion.cmake"
-    DESTINATION lib/cmake/necroutils
-)
+    write_basic_package_version_file(
+        ${CMAKE_CURRENT_BINARY_DIR}/necroutilsConfigVersion.cmake
+        VERSION ${PROJECT_VERSION}
+        COMPATIBILITY AnyNewerVersion
+    )
+
+    install(FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/necroutilsConfig.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/necroutilsConfigVersion.cmake
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/necroutils
+    )
+endif()
