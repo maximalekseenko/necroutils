@@ -8,8 +8,17 @@ project(necroutils
 )
 
 # -------------------- OPTIONS --------------------
-option(NECROUTILS_INSTALL "Install necroutils and it's dependencies" ${PROJECT_IS_TOP_LEVEL})
-option(NECROUTILS_RUN_CPPLINT "Run cpplint (Google style tests) when building" OFF)
+include(CMakeDependentOption)
+
+option(NECROUTILS_INSTALL "Install necroutils" ${PROJECT_IS_TOP_LEVEL})
+cmake_dependent_option(NECROUTILS_INSTALL_RUNCPPLINT "Install cpplint cmake tool" ON NECROUTILS_INSTALL OFF)
+
+
+# -------------------- OPTIONS --------------------
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+if(NOT PROJECT_IS_TOP_LEVEL)
+    set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" PARENT_SCOPE)
+endif()
 
 # -------------------- LIBRARY TARGET --------------------
 add_library(necroutils SHARED)
@@ -21,20 +30,40 @@ set_target_properties(necroutils PROPERTIES
     SOVERSION ${PROJECT_VERSION_MAJOR}
 )
 
-# -------------------- C++ STANDARD & WARNINGS --------------------
+# -------------------- COMPILE AND LINKING FLAGS --------------------
 target_compile_features(necroutils PUBLIC cxx_std_20)
 
+target_compile_definitions(necroutils PRIVATE NECROUTILS_LOCAL)
+
 if(MSVC)
-    target_compile_options(necroutils PRIVATE /W4 /permissive-)
+    target_compile_options(necroutils INTERFACE
+        /W4
+        /permissive-
+    )
 else()
-    target_compile_options(necroutils PRIVATE -Wall -Wpedantic -Wshadow -Wnon-virtual-dtor)
+    target_compile_options(necroutils INTERFACE
+        -W
+        -Wall 
+        -Wcast-qual
+        -Wextra
+        -Wsign-compare
+        -Wundef
+        -Wpointer-arith
+        -Wwrite-strings
+        -Wredundant-decls
+        -Wformat-security
+        -Wformat=2
+        -Winit-self
+        -Wnon-virtual-dtor
+        -Wsuggest-override
+    )
 endif()
 
 if(MINGW)
-    target_link_options(necroutils PRIVATE -static -static-libgcc -static-libstdc++)
+    target_link_options(necroutils INTERFACE -static -static-libgcc -static-libstdc++)
 endif()
 
-# -------------------- INCLUDE DIRECTORIES --------------------
+# -------------------- DIRECTORIES AND SOURCES --------------------
 target_include_directories(necroutils
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -43,12 +72,6 @@ target_include_directories(necroutils
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
-# -------------------- COMPILE DEFINITIONS --------------------
-target_compile_definitions(necroutils
-    PRIVATE NECROUTILS_LOCAL
-)
-
-# -------------------- SOURCES --------------------
 target_sources(necroutils
     PRIVATE
         src/necroutils/colexc/collective_exception.cpp
@@ -56,37 +79,33 @@ target_sources(necroutils
         src/necroutils/logger/logsink.cpp
 )
 
-# -------------------- OPTIONAL CPPLINT --------------------
-if(NECROUTILS_RUN_CPPLINT)
-    include(FetchContent)
-    FetchContent_Declare(
-        cpplint
-        GIT_REPOSITORY https://github.com/cpplint/cpplint/
-        GIT_TAG        2.0.2)
-    FetchContent_MakeAvailable(cpplint)
-
-    find_package(Python3 COMPONENTS Interpreter REQUIRED)
-
-    add_custom_command(
-        TARGET necroutils POST_BUILD
-        COMMAND ${Python3_EXECUTABLE}
-        ${cpplint_SOURCE_DIR}/cpplint.py
-        "--recursive"
-        "--quiet"
-        "${CMAKE_CURRENT_SOURCE_DIR}/include"
-        "${CMAKE_CURRENT_SOURCE_DIR}/src"
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Running cpplint (Google styles tests) for necroutils."
+# -------------------- CPPLINT --------------------
+if(PROJECT_IS_TOP_LEVEL)
+    include(necroutilsRunCpplint)
+    necroutils_RunCpplint(necroutils 
+        DIRECTORIES 
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
     )
 endif()
 
 # -------------------- INSTALLATION --------------------
+include(GNUInstallDirs)
+
+set(NECROUTILS_INSTALL_LIBDIR "${CMAKE_INSTALL_LIBDIR}/cmake/necroutils")
+set(NECROUTILS_EXPORT_TARGETS necroutilsTargets)
+
+if(NECROUTILS_INSTALL_RUNCPPLINT)
+    install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/cmake/necroutilsRunCpplint.cmake
+        DESTINATION ${NECROUTILS_INSTALL_LIBDIR}
+    )
+endif()
+
 if (NECROUTILS_INSTALL)
-    include(GNUInstallDirs)
     include(CMakePackageConfigHelpers)
-    
+
     install(TARGETS necroutils
-        EXPORT necroutilsTargets
+        EXPORT ${NECROUTILS_EXPORT_TARGETS}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
@@ -95,18 +114,16 @@ if (NECROUTILS_INSTALL)
 
     install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-    install(EXPORT necroutilsTargets
-        FILE necroutilsTargets.cmake
+    install(EXPORT ${NECROUTILS_EXPORT_TARGETS}
+        FILE ${NECROUTILS_EXPORT_TARGETS}.cmake
         NAMESPACE necroutils::
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/necroutils
+        DESTINATION ${NECROUTILS_INSTALL_LIBDIR}
     )
 
-    set(targets_export_name necroutilsTargets)
-
     configure_package_config_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/necroutils-config.cmake.in
+        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/necroutilsConfig.cmake.in
         ${CMAKE_CURRENT_BINARY_DIR}/necroutilsConfig.cmake
-        INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/necroutils
+        INSTALL_DESTINATION ${NECROUTILS_INSTALL_LIBDIR}
     )
 
     write_basic_package_version_file(
@@ -118,6 +135,6 @@ if (NECROUTILS_INSTALL)
     install(FILES
         ${CMAKE_CURRENT_BINARY_DIR}/necroutilsConfig.cmake
         ${CMAKE_CURRENT_BINARY_DIR}/necroutilsConfigVersion.cmake
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/necroutils
+        DESTINATION ${NECROUTILS_INSTALL_LIBDIR}
     )
 endif()

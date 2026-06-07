@@ -1,0 +1,11 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+
+if (NOT TARGET necroutils::necroutils)
+  include("${CMAKE_CURRENT_LIST_DIR}/@NECROUTILS_EXPORT_TARGETS@.cmake")
+endif ()
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
+
+check_required_components(necroutils)
