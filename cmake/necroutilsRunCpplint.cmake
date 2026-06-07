@@ -1,4 +1,10 @@
+option(NECROUTILS_CPPLINT_ONLY_TOP_LEVEL "Create <project-name>_lint target only if top project" ON)
+
 function(necroutils_RunCpplint PROJECT_NAME)
+    if(NECROUTILS_CPPLINT_ONLY_TOP_LEVEL AND NOT PROJECT_IS_TOP_LEVEL)
+        return()
+    endif()
+
     cmake_parse_arguments(PARSE_ARGV 1 NRC "" "" "DIRECTORIES")
 
     set(CPP_FILES "")
