@@ -2,7 +2,7 @@
 
 #include "necroutils/logger.h"
 
-class TestSink : public ILogSink {
+class TestSink : public LogSink {
  public:
   std::string lastMessage;
 
@@ -26,7 +26,7 @@ TEST(LoggerTest, NoSinkProducesNoOutput) {
 
 TEST(LoggerTest, DefaultFormatOutputsCorrectly) {
   Logger logger("test");
-  auto sink = std::make_shared<ConsoleLogSink>();
+  auto sink = ConsoleLogSink::Create();
   logger.AddSink(sink);
 
   ::testing::internal::CaptureStdout();

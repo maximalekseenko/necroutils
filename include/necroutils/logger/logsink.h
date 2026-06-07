@@ -3,97 +3,70 @@
 #ifndef INCLUDE_NECROUTILS_LOGGER_LOGSINK_H_
 #define INCLUDE_NECROUTILS_LOGGER_LOGSINK_H_
 
-#include <cstdint>
-#include <fstream>
 #include <functional>
+#include <memory>
 #include <string>
 #include <unordered_set>
 
 #include "necroutils/dll.h"
 #include "necroutils/logger/loglevel.h"
 
-/// @brief Interface type for LogSinks.
-class NECROUTILS_API ILogSink {
+class NECROUTILS_API LogSink {
  public:
-  virtual ~ILogSink() = default;
+  using Ptr = std::shared_ptr<LogSink>;
 
- public:  // -------------------- TYPE DEFINITIONS --------------------
-  /// @brief Type for a function for creating messages.
   using MakeMessageFn = std::function<std::string(
       const std::string&, const LogLevel&, const std::string&)>;
 
- public:  // -------------------- PUBLIC FUNCTIONS --------------------
-  /// @brief Adds source to blacklist.
-  ///
-  /// Logs from sources in blacklist will be ignored.
-  /// @param source_name The name of the source to ignore.
-  void AddSourceToBlacklist(std::string source_name);
+  LogSink(LogSink&& other) = delete;
+  LogSink& operator=(LogSink&& other) = delete;
 
-  /// @brief Adds log level to blacklist.
-  ///
-  /// Logs of levels that are in blacklist will be ignored.
-  /// @param log_level The log level to ignore.
-  void AddLogLevelToBlacklist(LogLevel log_level);
+  LogSink(const LogSink&) = delete;
+  LogSink& operator=(const LogSink&) = delete;
 
-  /// @brief Removes source from blacklist.
-  /// @param source_name The name of the source to stop ignoreing.
-  void RemoveSourceFromBlacklist(std::string source_name);
+  virtual ~LogSink() = default;
 
-  /// @brief Removes log level from blacklist.
-  /// @param source_name The log level to stop ignoreing.
-  void RemoveLogLevelFromBlacklist(LogLevel log_level);
+  void AddSourceToBlacklist(std::string source_name) {
+    blacklist_src_names_.insert(source_name);
+  }
 
-  /// @brief Sets a new function to be used for forming log messages.
-  /// @param make_message A new function to use.
-  void SetMakeMessageFunction(MakeMessageFn make_message);
+  void AddLogLevelToBlacklist(LogLevel log_level) {
+    blacklist_log_levels_.insert(log_level);
+  }
 
- protected:  // -------------------- VIRTUAL FUNCTIONS --------------------
-  /// @brief Virtual function for handing logging.
-  ///
-  /// Passed message is already parsed and filtered.
-  /// It already ends with a new line.
-  /// @param message
-  virtual void OnLog(const std::string& message) = 0;
+  void RemoveSourceFromBlacklist(std::string source_name) {
+    blacklist_src_names_.erase(source_name);
+  }
 
- private:  // -------------------- FRIEND FUNCTIONS --------------------
-  friend class Logger;
+  void RemoveLogLevelFromBlacklist(LogLevel log_level) {
+    blacklist_log_levels_.erase(log_level);
+  }
 
-  /// @brief Log
-  /// @param message
-  /// @param log_level
-  /// @param source_name
+  void SetMakeMessageFunction(MakeMessageFn make_message) {
+    make_message_ = make_message;
+  }
+
   void Log(const std::string& message, const LogLevel& log_level,
            const std::string& source_name);
 
- private:  // -------------------- DEFAULT FUNCTIONS --------------------
+ protected:
+  LogSink() = default;
+
+  /// @brief Called when Log is happening.
+  /// @param message Message compiled with make_message_.
+  /// Guaranteed to end with a new line.
+  virtual void OnLog(const std::string& message) = 0;
+
+ private:
   static std::string MakeMessageDefault(const std::string& message,
                                         const LogLevel& log_level,
                                         const std::string& source_name);
 
- private:  // -------------------- PRIVATE MEMBERS --------------------
-  MakeMessageFn make_message_{ILogSink::MakeMessageDefault};
+ private:
+  MakeMessageFn make_message_{LogSink::MakeMessageDefault};
+
   std::unordered_set<std::string> blacklist_src_names_;
   std::unordered_set<LogLevel> blacklist_log_levels_;
-};
-
-// +------------------- -------- -------------------+
-// -------------------- DERIVEDS --------------------
-// +------------------- -------- -------------------+
-
-class NECROUTILS_API FileLogSink : public ILogSink {
- public:
-  explicit FileLogSink(const std::string& filename);
-
- protected:
-  void OnLog(const std::string& message) override;
-
- private:
-  std::ofstream output_file_;
-};
-
-class NECROUTILS_API ConsoleLogSink : public ILogSink {
- protected:
-  void OnLog(const std::string& message) override;
 };
 
 #endif  // INCLUDE_NECROUTILS_LOGGER_LOGSINK_H_

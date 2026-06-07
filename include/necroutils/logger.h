@@ -5,6 +5,7 @@
 
 #include "necroutils/logger/logger.h"
 #include "necroutils/logger/loglevel.h"
-#include "necroutils/logger/logsink.h"
+#include "necroutils/logger/logsink_console.h"
+#include "necroutils/logger/logsink_file.h"
 
 #endif  // INCLUDE_NECROUTILS_LOGGER_H_

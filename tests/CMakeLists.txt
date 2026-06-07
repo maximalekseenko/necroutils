@@ -7,7 +7,7 @@ FetchContent_Declare(googletest
 )
 FetchContent_MakeAvailable(googletest)
 
-add_executable(logger_tests logger_tests.cpp)
+add_executable(logger_tests logger_tests.cpp logger_logsink_tests.cpp)
 target_link_libraries(logger_tests PRIVATE necroutils GTest::gtest_main)
 
 include(GoogleTest)
