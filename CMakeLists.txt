@@ -10,8 +10,14 @@ project(necroutils
 include(CMakeDependentOption)
 
 option(NECROUTILS_INSTALL "Install necroutils" ${PROJECT_IS_TOP_LEVEL})
+
 cmake_dependent_option(NECROUTILS_INSTALL_RUNCPPLINT "Install cpplint cmake tool" ON NECROUTILS_INSTALL OFF)
 
+option(NECROUTILS_TESTING "Build testing suits" ${PROJECT_IS_TOP_LEVEL})
+
+cmake_dependent_option(NECROUTILS_TESTING_GTEST "Create gtest suits" ON NECROUTILS_TESTING OFF)
+
+cmake_dependent_option(NECROUTILS_TESTING_CPPLINT "Create cpplint suit" ON NECROUTILS_TESTING OFF)
 
 # -------------------- OPTIONS --------------------
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
@@ -78,8 +84,14 @@ target_sources(necroutils
         src/necroutils/logger/logsink.cpp
 )
 
-# -------------------- CPPLINT --------------------
-if(PROJECT_IS_TOP_LEVEL)
+# -------------------- TESTING --------------------
+if(NECROUTILS_TESTING_GTEST)
+    include(CTest)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
+
+if(NECROUTILS_TESTING_CPPLINT)
     include(necroutilsRunCpplint)
     necroutils_RunCpplint(necroutils 
         DIRECTORIES 
