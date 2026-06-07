@@ -18,7 +18,7 @@ jobs:
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release
 
     - name: Build Code
-      run: cmake --build ${{github.workspace}}/build --configuration Release
+      run: cmake --build ${{github.workspace}}/build
 
     - name: Run Tests
       working-directory: ${{github.workspace}}/build
