@@ -15,9 +15,9 @@ cmake_dependent_option(NECROUTILS_INSTALL_RUNCPPLINT "Install cpplint cmake tool
 
 option(NECROUTILS_TESTING "Build testing suits" ${PROJECT_IS_TOP_LEVEL})
 
-cmake_dependent_option(NECROUTILS_TESTING_GTEST "Create gtest suits" ON NECROUTILS_TESTING OFF)
+cmake_dependent_option(NECROUTILS_TESTING_GTEST "Build gtest suits" ON NECROUTILS_TESTING OFF)
 
-cmake_dependent_option(NECROUTILS_TESTING_CPPLINT "Create cpplint suit" ON NECROUTILS_TESTING OFF)
+cmake_dependent_option(NECROUTILS_TESTING_CPPLINT "Build cpplint suit" ON NECROUTILS_TESTING OFF)
 
 # -------------------- OPTIONS --------------------
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
@@ -92,11 +92,11 @@ if(NECROUTILS_TESTING_GTEST)
 endif()
 
 if(NECROUTILS_TESTING_CPPLINT)
-    include(necroutilsRunCpplint)
-    necroutils_RunCpplint(necroutils 
+    include(necroutilsCpplintTest)
+    necroutils_CreateCpplintTests(necroutils 
         DIRECTORIES 
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/src
+            ${CMAKE_CURRENT_SOURCE_DIR}/include
+            ${CMAKE_CURRENT_SOURCE_DIR}/src
     )
 endif()
 

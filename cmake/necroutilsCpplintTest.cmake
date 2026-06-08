@@ -1,4 +1,4 @@
-function(necroutils_RunCpplint PROJECT_NAME)
+function(necroutils_CreateCpplintTests PROJECT_NAME)
     cmake_parse_arguments(PARSE_ARGV 1 NRC "" "" "DIRECTORIES")
 
     set(CPP_FILES "")
