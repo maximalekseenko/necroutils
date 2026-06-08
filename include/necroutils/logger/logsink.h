@@ -49,6 +49,10 @@ class NECROUTILS_API LogSink {
   void Log(const std::string& message, const LogLevel& log_level,
            const std::string& source_name);
 
+  static std::string MakeMessageDefaultFn(const std::string& message,
+                                          const LogLevel& log_level,
+                                          const std::string& source_name);
+
  protected:
   LogSink() = default;
 
@@ -58,12 +62,7 @@ class NECROUTILS_API LogSink {
   virtual void OnLog(const std::string& message) = 0;
 
  private:
-  static std::string MakeMessageDefault(const std::string& message,
-                                        const LogLevel& log_level,
-                                        const std::string& source_name);
-
- private:
-  MakeMessageFn make_message_{LogSink::MakeMessageDefault};
+  MakeMessageFn make_message_{LogSink::MakeMessageDefaultFn};
 
   std::unordered_set<std::string> blacklist_src_names_;
   std::unordered_set<LogLevel> blacklist_log_levels_;
