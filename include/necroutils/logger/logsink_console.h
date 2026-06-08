@@ -17,7 +17,7 @@ class NECROUTILS_API ConsoleLogSink : public LogSink {
   ConsoleLogSink() = default;
 
   void OnLog(const std::string& message) override {
-    std::cout << message << std::endl;
+    std::cout << message << std::flush;
   }
 };
 

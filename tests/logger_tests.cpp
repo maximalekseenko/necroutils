@@ -21,7 +21,7 @@ TEST(LoggerTest, NoSinkProducesNoOutput) {
   ::testing::internal::CaptureStdout();
   logger.Log("lorem ipsum", LogLevel::Debug);
   std::string output = ::testing::internal::GetCapturedStdout();
-  EXPECT_EQ(output, "");  // No sink → nothing printed
+  EXPECT_EQ(output, "");
 }
 
 TEST(LoggerTest, DefaultFormatOutputsCorrectly) {

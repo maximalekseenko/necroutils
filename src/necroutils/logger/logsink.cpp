@@ -16,12 +16,12 @@ void LogSink::Log(const std::string& message, const LogLevel& log_level,
 
   if (!compiled_message.ends_with('\n')) compiled_message.push_back('\n');
 
-  OnLog(make_message_(message, log_level, source_name));
+  OnLog(compiled_message);
 }
 
-std::string LogSink::MakeMessageDefault(const std::string& message,
-                                        const LogLevel& log_level,
-                                        const std::string&) {
+std::string LogSink::MakeMessageDefaultFn(const std::string& message,
+                                          const LogLevel& log_level,
+                                          const std::string&) {
   std::string final_message;
 
   final_message += "[";
