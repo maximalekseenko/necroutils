@@ -190,10 +190,132 @@ TEST(LoggerSinkTest, SinkLogDontAddNewLineIfMessageHasOne) {
   EXPECT_STREQ(sink.messages.back().c_str(), "msg\n");
 }
 
-TEST(LoggerSinkTest, SinkBlacklistLoggerAdd) {}
+TEST(LoggerSinkTest, SinkBlacklistSourceAdd) {
+  TestLogsink sink;
 
-TEST(LoggerSinkTest, SinkBlacklistLoggerRemove) {}
+  sink.SetMakeMessageFunction([](const std::string& msg, const LogLevel&,
+                                 const std::string&) { return msg; });
 
-TEST(LoggerSinkTest, SinkBlacklistLogLevelAdd) {}
+  sink.Log("test1 msg1 info", LogLevel::Info, "test1");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test1 msg1 info\n");
+  sink.Log("test1 msg1 error", LogLevel::Error, "test1");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test1 msg1 error\n");
+  sink.Log("test2 msg1 info", LogLevel::Info, "test2");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test2 msg1 info\n");
+  sink.Log("test2 msg1 error", LogLevel::Error, "test2");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test2 msg1 error\n");
 
-TEST(LoggerSinkTest, SinkBlacklistLogLevelRemove) {}
+  sink.AddSourceToBlacklist("test1");
+
+  sink.Log("test1 msg2 info", LogLevel::Info, "test1");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test2 msg1 error\n");
+  sink.Log("test1 msg2 error", LogLevel::Error, "test1");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test2 msg1 error\n");
+  sink.Log("test2 msg2 info", LogLevel::Info, "test2");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test2 msg2 info\n");
+  sink.Log("test2 msg2 error", LogLevel::Error, "test2");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test2 msg2 error\n");
+}
+
+TEST(LoggerSinkTest, SinkBlacklistSourceRemove) {
+  TestLogsink sink;
+
+  sink.SetMakeMessageFunction([](const std::string& msg, const LogLevel&,
+                                 const std::string&) { return msg; });
+
+  sink.Log("test1 msg1 info", LogLevel::Info, "test1");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test1 msg1 info\n");
+  sink.Log("test1 msg1 error", LogLevel::Error, "test1");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test1 msg1 error\n");
+  sink.Log("test2 msg1 info", LogLevel::Info, "test2");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test2 msg1 info\n");
+  sink.Log("test2 msg1 error", LogLevel::Error, "test2");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test2 msg1 error\n");
+
+  sink.AddSourceToBlacklist("test1");
+
+  sink.Log("test1 msg2 info", LogLevel::Info, "test1");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test2 msg1 error\n");
+  sink.Log("test1 msg2 error", LogLevel::Error, "test1");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test2 msg1 error\n");
+  sink.Log("test2 msg2 info", LogLevel::Info, "test2");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test2 msg2 info\n");
+  sink.Log("test2 msg2 error", LogLevel::Error, "test2");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test2 msg2 error\n");
+
+  sink.RemoveSourceFromBlacklist("test1");
+
+  sink.Log("test1 msg3 info", LogLevel::Info, "test1");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test1 msg3 info\n");
+  sink.Log("test1 msg3 error", LogLevel::Error, "test1");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test1 msg3 error\n");
+  sink.Log("test2 msg3 info", LogLevel::Info, "test2");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test2 msg3 info\n");
+  sink.Log("test2 msg3 error", LogLevel::Error, "test2");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test2 msg3 error\n");
+}
+
+TEST(LoggerSinkTest, SinkBlacklistLogLevelAdd) {
+  TestLogsink sink;
+
+  sink.SetMakeMessageFunction([](const std::string& msg, const LogLevel&,
+                                 const std::string&) { return msg; });
+
+  sink.Log("test1 msg1 info", LogLevel::Info, "test1");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test1 msg1 info\n");
+  sink.Log("test1 msg1 error", LogLevel::Error, "test1");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test1 msg1 error\n");
+  sink.Log("test2 msg1 info", LogLevel::Info, "test2");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test2 msg1 info\n");
+  sink.Log("test2 msg1 error", LogLevel::Error, "test2");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test2 msg1 error\n");
+
+  sink.AddLogLevelToBlacklist(LogLevel::Info);
+
+  sink.Log("test1 msg2 info", LogLevel::Info, "test1");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test2 msg1 error\n");
+  sink.Log("test1 msg2 error", LogLevel::Error, "test1");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test1 msg2 error\n");
+  sink.Log("test2 msg2 info", LogLevel::Info, "test2");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test1 msg2 error\n");
+  sink.Log("test2 msg2 error", LogLevel::Error, "test2");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test2 msg2 error\n");
+}
+
+TEST(LoggerSinkTest, SinkBlacklistLogLevelRemove) {
+  TestLogsink sink;
+
+  sink.SetMakeMessageFunction([](const std::string& msg, const LogLevel&,
+                                 const std::string&) { return msg; });
+
+  sink.Log("test1 msg1 info", LogLevel::Info, "test1");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test1 msg1 info\n");
+  sink.Log("test1 msg1 error", LogLevel::Error, "test1");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test1 msg1 error\n");
+  sink.Log("test2 msg1 info", LogLevel::Info, "test2");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test2 msg1 info\n");
+  sink.Log("test2 msg1 error", LogLevel::Error, "test2");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test2 msg1 error\n");
+
+  sink.AddLogLevelToBlacklist(LogLevel::Info);
+
+  sink.Log("test1 msg2 info", LogLevel::Info, "test1");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test2 msg1 error\n");
+  sink.Log("test1 msg2 error", LogLevel::Error, "test1");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test1 msg2 error\n");
+  sink.Log("test2 msg2 info", LogLevel::Info, "test2");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test1 msg2 error\n");
+  sink.Log("test2 msg2 error", LogLevel::Error, "test2");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test2 msg2 error\n");
+
+  sink.RemoveLogLevelFromBlacklist(LogLevel::Info);
+
+  sink.Log("test1 msg3 info", LogLevel::Info, "test1");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test1 msg3 info\n");
+  sink.Log("test1 msg3 error", LogLevel::Error, "test1");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test1 msg3 error\n");
+  sink.Log("test2 msg3 info", LogLevel::Info, "test2");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test2 msg3 info\n");
+  sink.Log("test2 msg3 error", LogLevel::Error, "test2");
+  EXPECT_STREQ(sink.messages.back().c_str(), "test2 msg3 error\n");
+}
