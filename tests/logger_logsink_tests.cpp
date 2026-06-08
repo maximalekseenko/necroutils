@@ -120,8 +120,8 @@ TEST(LoggerSinkTest, FileSinkLogHasOutputTwoLines) {
 TEST(LoggerSinkTest, ConsoleSinkLogHasOutputOneLine) {
   auto sink = ConsoleLogSink::Create();
 
-  sink->SetMakeMessageFunction([](const std::__1::string& msg, const LogLevel&,
-                                  const std::__1::string&) { return msg; });
+  sink->SetMakeMessageFunction([](const std::string& msg, const LogLevel&,
+                                  const std::string&) { return msg; });
 
   ::testing::internal::CaptureStdout();
   sink->Log("msg", LogLevel::Info, "test");
@@ -132,8 +132,8 @@ TEST(LoggerSinkTest, ConsoleSinkLogHasOutputOneLine) {
 TEST(LoggerSinkTest, ConsoleSinkLogHasOutputTwoLines) {
   auto sink = ConsoleLogSink::Create();
 
-  sink->SetMakeMessageFunction([](const std::__1::string& msg, const LogLevel&,
-                                  const std::__1::string&) { return msg; });
+  sink->SetMakeMessageFunction([](const std::string& msg, const LogLevel&,
+                                  const std::string&) { return msg; });
 
   ::testing::internal::CaptureStdout();
   sink->Log("msg1", LogLevel::Info, "test");
@@ -163,9 +163,8 @@ TEST(LoggerSinkTest, SinkCustomMessageChangesOutput) {
       FixMessageNL(LogSink::MakeMessageDefaultFn("msg", LogLevel::Info, "test"))
           .c_str());
 
-  sink.SetMakeMessageFunction(
-      [](const std::__1::string& msg, const LogLevel&,
-         const std::__1::string& src) { return src + msg; });
+  sink.SetMakeMessageFunction([](const std::string& msg, const LogLevel&,
+                                 const std::string& src) { return src + msg; });
 
   sink.Log("msg", LogLevel::Info, "test");
   EXPECT_STREQ(sink.messages.back().c_str(), "testmsg\n");
@@ -174,8 +173,8 @@ TEST(LoggerSinkTest, SinkCustomMessageChangesOutput) {
 TEST(LoggerSinkTest, SinkLogAddsNewLineIfMessageHasNone) {
   TestLogsink sink;
 
-  sink.SetMakeMessageFunction([](const std::__1::string& msg, const LogLevel&,
-                                 const std::__1::string&) { return msg; });
+  sink.SetMakeMessageFunction([](const std::string& msg, const LogLevel&,
+                                 const std::string&) { return msg; });
 
   sink.Log("msg", LogLevel::Info, "test");
   EXPECT_STREQ(sink.messages.back().c_str(), "msg\n");
@@ -184,8 +183,8 @@ TEST(LoggerSinkTest, SinkLogAddsNewLineIfMessageHasNone) {
 TEST(LoggerSinkTest, SinkLogDontAddNewLineIfMessageHasOne) {
   TestLogsink sink;
 
-  sink.SetMakeMessageFunction([](const std::__1::string& msg, const LogLevel&,
-                                 const std::__1::string&) { return msg; });
+  sink.SetMakeMessageFunction([](const std::string& msg, const LogLevel&,
+                                 const std::string&) { return msg; });
 
   sink.Log("msg\n", LogLevel::Info, "test");
   EXPECT_STREQ(sink.messages.back().c_str(), "msg\n");
