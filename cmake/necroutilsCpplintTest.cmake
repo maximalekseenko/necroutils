@@ -1,10 +1,4 @@
-option(NECROUTILS_CPPLINT_ONLY_TOP_LEVEL "Create <project-name>_lint target only if top project" ON)
-
-function(necroutils_RunCpplint PROJECT_NAME)
-    if(NECROUTILS_CPPLINT_ONLY_TOP_LEVEL AND NOT PROJECT_IS_TOP_LEVEL)
-        return()
-    endif()
-
+function(necroutils_CreateCpplintTests PROJECT_NAME)
     cmake_parse_arguments(PARSE_ARGV 1 NRC "" "" "DIRECTORIES")
 
     set(CPP_FILES "")
@@ -24,7 +18,7 @@ function(necroutils_RunCpplint PROJECT_NAME)
         list(APPEND CPP_FILES ${dir_cpp})
     endforeach()
 
-    set(LINT_TARGET "${PROJECT_NAME}_lint")
+    set(LINT_TARGET "${PROJECT_NAME}_cpplint_tests")
 
     add_custom_target(${LINT_TARGET} ALL DEPENDS ${CPP_FILES})
 
