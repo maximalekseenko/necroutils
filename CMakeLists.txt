@@ -82,6 +82,7 @@ target_sources(necroutils
         src/necroutils/colexc/collective_exception.cpp
         src/necroutils/logger/logger.cpp
         src/necroutils/logger/logsink.cpp
+        src/necroutils/iterdir/iterate_dir.cc
 )
 
 # -------------------- TESTING --------------------
